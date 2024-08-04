@@ -29,6 +29,7 @@ return new class extends Migration
             $table->date('tgl_sup');
             $table->string('perkem');
             $table->string('petugas_id');
+            $table->string('desas_id');
             $table->timestamps();
         });
     }

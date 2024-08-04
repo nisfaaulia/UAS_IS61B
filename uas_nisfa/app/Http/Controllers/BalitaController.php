@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Desa;
+use App\Models\Petugas;
 use Illuminate\Http\Request;
 use App\Models\Balita;
 
@@ -13,8 +15,8 @@ class BalitaController extends Controller
     public function index()
     {
         $nomor = 1;
-        $bal = Balita::all();
-        return view('balita.index',compact('nomor','bal'));
+    $bal = Balita::with(['petugas', 'desa'])->get();
+    return view('balita.index', compact('nomor', 'bal'));
     }
 
     /**
@@ -22,21 +24,60 @@ class BalitaController extends Controller
      */
     public function create()
     {
-        return view('balita.form');
+        $pet = Petugas::all();
+        $des = Desa::all();
+        return view('balita.form', compact('des','pet'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-    {
-        $jur = new Balita();
-        $jur->kode = $request->kode;
-        $jur->jurusan = $request->nama;
-        $jur->save();
+{
+    $request->validate([
+        'no_rekme' => 'required|string|max:255',
+        'nm_pas' => 'required|string|max:255',
+        'alamat' => 'required|string|max:255',
+        'status' => 'required|string|max:50',
+        'tgl_lahir' => 'required|date',
+        'nm_ayah' => 'required|string|max:255',
+        'umur_ayah' => 'required|integer',
+        'nm_ibu' => 'required|string|max:255',
+        'umur_ibu' => 'required|integer',
+        'berat_lahir' => 'required|string|max:255',
+        'status_imu' => 'required|string|max:50',
+        'tgl_imu' => 'required|date',
+        'suplemen' => 'required|string|max:50',
+        'tgl_sup' => 'required|date',
+        'perkem' => 'required|string|max:255',
+        'petugas_id' => 'required|exists:petugas,id',
+        'desas_id' => 'required|exists:desas,id',
+    ]);
 
-        return redirect('/balita/');
-    }
+    $bal = new Balita();
+    $bal->no_rekme = $request->no_rekme;
+    $bal->nm_pas = $request->nm_pas;
+    $bal->alamat = $request->alamat;
+    $bal->status = $request->status;
+    $bal->tgl_lahir = $request->tgl_lahir;
+    $bal->nm_ayah = $request->nm_ayah;
+    $bal->umur_ayah = $request->umur_ayah;
+    $bal->nm_ibu = $request->nm_ibu;
+    $bal->umur_ibu = $request->umur_ibu;
+    $bal->berat_lahir = $request->berat_lahir;
+    $bal->status_imu = $request->status_imu;
+    $bal->tgl_imu = $request->tgl_imu;
+    $bal->suplemen = $request->suplemen;
+    $bal->tgl_sup = $request->tgl_sup;
+    $bal->perkem = $request->perkem;
+    $bal->petugas_id = $request->petugas_id;
+    $bal->desas_id = $request->desas_id;
+
+    $bal->save();
+
+    return redirect('/balita/');
+}
+
 
     /**
      * Display the specified resource.
@@ -44,7 +85,6 @@ class BalitaController extends Controller
     public function show(string $id)
     {
         //
-
     }
 
     /**
@@ -52,8 +92,10 @@ class BalitaController extends Controller
      */
     public function edit(string $id)
     {
-        $jur = Balita::find($id);
-        return view('balita.edit',compact('bal'));
+        $des = Desa::all();
+        $pet = Petugas::all();
+        $bal = Balita::find($id);
+        return view('balita.edit',compact('bal','des','pet'));
     }
 
     /**
@@ -62,12 +104,24 @@ class BalitaController extends Controller
     public function update(Request $request, string $id)
     {
         $bal = Balita::find($id);
-        $bal->kode = $request->kode;
-        $bal-> nama = $request->nama;
-        $bal-> alamat = $request->alamat;
-        $bal-> bb = $request->bb;
-        $bal-> tb = $request->tb;
-        $bal-> status = $request->status;
+        $bal->no_rekme = $request->no_rekme;
+        $bal->nm_pas = $request->nm_pas;
+        $bal->alamat = $request->alamat;
+        $bal->status = $request->status;
+        $bal->tgl_lahir = $request->tgl_lahir;
+        $bal->nm_ayah = $request->nm_ayah;
+        $bal->umur_ayah = $request->umur_ayah;
+        $bal->nm_ibu = $request->nm_ibu;
+        $bal->umur_ibu = $request->umur_ibu;
+        $bal->berat_lahir = $request->berat_lahir;
+        $bal->status_imu = $request->status_imu;
+        $bal->tgl_imu = $request->tgl_imu;
+        $bal->suplemen = $request->suplemen;
+        $bal->tgl_sup = $request->tgl_sup;
+        $bal->perkem = $request->perkem;
+        $bal->petugas_id = $request->petugas_id;
+        $bal->desas_id = $request->desas_id;
+
         $bal->save();
 
         return redirect('/balita/');
